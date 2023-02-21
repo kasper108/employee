@@ -2,9 +2,8 @@ package com.skasperiunas.employee.web.controller;
 
 import com.skasperiunas.employee.business.helper.CSVHelper;
 import com.skasperiunas.employee.business.message.ResponseMessage;
-import com.skasperiunas.employee.business.service.CSVService;
+import com.skasperiunas.employee.business.service.impl.CSVServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,15 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/employee/csv")
 public class CSVController {
-
-    @Autowired
-    private final CSVService service;
+    private final CSVServiceImpl service;
 
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile( @RequestParam("file") MultipartFile file ) {
@@ -29,7 +24,7 @@ public class CSVController {
 
         if(CSVHelper.hasCSVFormat(file)){
             try{
-                service.saveFile(file);
+                service.saveUploadedFileToDB(file);
                 message = "File " + file.getOriginalFilename() + " uploaded successfully !";
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
             } catch (Exception e){
